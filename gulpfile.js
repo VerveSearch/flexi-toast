@@ -1,43 +1,19 @@
-var gulp = require('gulp'),
+var gulp = require('gulp'),	
 	concat = require('gulp-concat'),
-	jshint = require('gulp-jshint'),
-	stylish = require('jshint-stylish'),
-	uglify = require('gulp-uglify'),
-	PATHS = {
-		JS:{
-			SRC:['./src/*.js','./src/**/*.js'],
-			DIST:'./dist'
-		}
-	},
-	PluginName = 'flexi-toast';
-
-function onError(err){
-	console.log('An error has occured: ',err);
-}
-
-gulp.task('jshint',function(){
-	return gulp.src(PATHS.JS.SRC)
-		.pipe(jshint())
-		.pipe(jshint.reporters(stylish)); 
-});
-
-gulp.task('concat',['jshint'],function(){
-	return gulp.src(PATHS.JS.SRC)
-		.pipe(concat(PluginName+'.js'))
-		.on('error',onError)
-		.pipe(gulp.dest(PATHS.JS.DIST))
-		.on('error',onError)
-		.pipe(concat(PluginName+'.min.js'))
-		.on('error',onError)
+	rename = require('gulp-rename'),
+	uglify = require('gulp-uglify');
+ 
+gulp.task('concat-src',function(){
+	gulp.src(['./js/app/*.js',  './js/app/**/*.js'])
+		.pipe(concat('flexitoast.js'))
+		.pipe(gulp.dest('./dist/scripts'))
+		.pipe(concat('flexitoast.min.js'))
 		.pipe(uglify())
-		.on('error',onError)
-		.pipe(gulp.dest(PATHS.JS.DIST)); 
+		.pipe(gulp.dest('./dist/scripts'));
 });
 
-gulp.task('watch',['concat'],function(){
-	return gulp.watch(PATHS.JS.SRC,['concat']); 
+gulp.task('watch', function(){
+	gulp.watch('./js/app/*.js', ['concat-src']);
 });
 
-gulp.task('default','watch',function(){
-
-});
+gulp.task('default', ['watch', 'concat-src']);
